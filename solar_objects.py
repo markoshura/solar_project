@@ -7,9 +7,10 @@ class Star:
     Содержит массу, координаты, скорость звезды,
     а также визуальный радиус звезды в пикселах и её цвет.
     """
-
     type = "star"
     """Признак объекта звезды"""
+
+    name = "star"
 
     m = 0
     """Масса звезды"""
@@ -35,11 +36,15 @@ class Star:
     R = 5
     """Радиус звезды"""
 
+    time=0
+
     color = "red"
     """Цвет звезды"""
 
     image = None
     """Изображение звезды"""
+    def to_s(self):
+        return 'Star ' + self.color
 
 
 class Planet:
@@ -51,8 +56,12 @@ class Planet:
     type = "planet"
     """Признак объекта планеты"""
 
+    name = "planet"
+
     m = 0
     """Масса планеты"""
+
+    time=0
 
     x = 0
     """Координата по оси **x**"""
@@ -80,3 +89,6 @@ class Planet:
 
     image = None
     """Изображение планеты"""
+
+    def to_s(self):
+        return 'Planet ' + self.color
