@@ -9,10 +9,10 @@
 header_font = "Arial-16"
 """Шрифт в заголовке"""
 
-window_width = 800
+window_width = 600
 """Ширина окна"""
 
-window_height = 800
+window_height = 600
 """Высота окна"""
 
 scale_factor = None
@@ -50,7 +50,8 @@ def scale_y(y):
     **y** — y-координата модели.
     """
 
-    return int(-y*scale_factor) + window_height//2
+    return int(-y*scale_factor) + window_width//2
+
 
 def create_star_image(space, star):
     """Создаёт отображаемый объект звезды.
@@ -74,7 +75,7 @@ def create_planet_image(space, planet):
     x = scale_x(planet.x)
     y = scale_y(planet.y)
     r = planet.R
-    planet.image = space.create_oval([x - r, y - r], [x + r, y + r], fill=planet.color)# FIXME: сделать как у звезды
+    planet.image = space.create_oval([x - r, y - r], [x + r, y + r], fill=planet.color)
 
 
 def update_system_name(space, system_name):
@@ -93,6 +94,8 @@ def update_object_position(space, body):
     **space** — холст для рисования.
     **body** — тело, которое нужно переместить.
     """
+    #if body.type == 'planet': print(body.to_s() + str((body.Vx**2+body.Vy**2)**0.5))
+
     x = scale_x(body.x)
     y = scale_y(body.y)
     r = body.R
