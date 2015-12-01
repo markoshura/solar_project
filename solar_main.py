@@ -7,6 +7,8 @@ from solar_vis import *
 from solar_model import *
 from solar_input import *
 
+BOOST=500
+
 perform_execution = False
 """Флаг цикличности выполнения расчёта"""
 
@@ -25,6 +27,8 @@ time_step = None
 space_objects = []
 """Список космических объектов."""
 
+out = True
+
 
 def execution():
     """Функция исполнения -- выполняется циклически, вызывая обработку всех небесных тел,
@@ -34,14 +38,17 @@ def execution():
     """
     global physical_time
     global displayed_time
-    recalculate_space_objects_positions(space_objects, time_step.get())
-    for body in space_objects:
-        update_object_position(space, body)
-    physical_time += time_step.get()
-    displayed_time.set("%.1f" % physical_time + " seconds gone")
+    #print(time_step.get())
+    for i in range(BOOST):
+        recalculate_space_objects_positions(space_objects, time_step.get(), physical_time + time_step.get())
+        if out: save_to_cache(space_objects)
+        for body in space_objects:
+            update_object_position(space, body)
+        physical_time += time_step.get()
+        displayed_time.set("%.1f" % physical_time + " seconds gone")
 
     if perform_execution:
-        space.after(101 - int(time_speed.get()), execution)
+        space.after((101 - int(time_speed.get())), execution)
 
 
 def start_execution():
@@ -66,6 +73,7 @@ def stop_execution():
     start_button['text'] = "Start"
     start_button['command'] = start_execution
     print('Paused execution.')
+    if out: save_stats('log.txt')
 
 
 def open_file_dialog():
@@ -75,6 +83,7 @@ def open_file_dialog():
     """
     global space_objects
     global perform_execution
+    global physical_time
     perform_execution = False
     for obj in space_objects:
         space.delete(obj.image)  # удаление старых изображений планет
@@ -82,6 +91,8 @@ def open_file_dialog():
     space_objects = read_space_objects_data_from_file(in_filename)
     max_distance = max([max(abs(obj.x), abs(obj.y)) for obj in space_objects])
     calculate_scale_factor(max_distance)
+
+    physical_time = 0
 
     for obj in space_objects:
         if obj.type == 'star':
@@ -144,9 +155,11 @@ def main():
     displayed_time.set(str(physical_time) + " seconds gone")
     time_label = tkinter.Label(frame, textvariable=displayed_time, width=30)
     time_label.pack(side=tkinter.RIGHT)
-
     root.mainloop()
     print('Modelling finished!')
 
 if __name__ == "__main__":
+    from sys import argv
+    global out
+    if len(argv)>1 and (argv[1] in ['--nooutput', '-no']): out=False
     main()
